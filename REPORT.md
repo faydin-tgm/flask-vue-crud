@@ -5,6 +5,7 @@ Verwendung von APIs
 2. neue TODO Liste erstellt
 
 3. die CRUD Befehle für die TODO Liste erstellt
-    Index.js
+    Index.js geändert
+    Todo.vue erstellt
 
 4. 
