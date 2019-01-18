@@ -7,7 +7,7 @@
     - Ich habe die BOOKS-Liste so angepasst, so dass es diese Elemente speichert und die Liste auf TODO benannt. Todo
 
 - Bereiten Sie die grafische Oberfläche für eine einfache Erstellung, Anzeige, Löschung und Anpassung der TODOs vor. Welche Komponenten müssen dafür erstellt werden?
-    - Es wurde die Todo.vue erstellt und darin die GUI-Elemente für die CRUD-Befehle erstellt. 
+    - Es wurde die Todo.vue erstellt und darin die GUI-Elemente für die CRUD-Befehle erstellt, sowie Funktionen, die mit Axios die CRUD-Befehle ausführen.. 
     In Index.js wurde die route vom Todo.vue eingegeben, damit es im VueJS-Client ausgeführt wird. 
     Mit dem Befehl 'npm run dev' habe ich den VueJS-Client unter dem Port 8081
      gestartet. 
@@ -18,7 +18,8 @@
     Falls nicht, wird die Login.vue aufgerufen und der User kann sich anmelden, bzw. registrieren.
 
 - Wie würden Sie eine einfache Authentifizierung implementieren? Beschreiben Sie die notwendigen Schritte!
-
+    - Da es eine Simple Authentifizierung sein soll, würde HTTP Basic Auth ausreichen.
+      Zuerst würde ich eine Funktion schreiben, die prüft, ob eine Authentifizierung notwendig ist und eine die prüft, ob ein Nutzername und der Password gültig sind. Und noch eine Funktion zum authentifizieren. 
 
 
 
