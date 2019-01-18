@@ -1,4 +1,3 @@
-import os
 import uuid
 
 from flask import Flask, jsonify, request
@@ -15,23 +14,32 @@ app.config.from_object(__name__)
 # enable CORS
 CORS(app)
 
-TODO = [
+TODOS = [
     {
         "id": uuid.uuid4().hex,
         "todo": "test_Todo",
         "assignee": "Test_assignee",
         "done": False
+    },
+    {
+        "id": uuid.uuid4().hex,
+        "todo": "test_Todo02",
+        "assignee": "Test_assignee02",
+        "done": True
     }
 
 ]
 
+@app.route('/ping', methods=['GET'])
+def ping_pong():
+    return jsonify('pong!')
 
 @app.route('/todos', methods=['GET', 'POST'])
 def all_todos():
     response_object = {'status': 'success'}
     if request.method == 'POST':
         post_data = request.get_json()
-        TODO.append({
+        TODOS.append({
             'id': uuid.uuid4().hex,
             'todo': post_data.get('todo'),
             'assignee': post_data.get('assignee'),
@@ -39,7 +47,7 @@ def all_todos():
         })
         response_object['message'] = 'Todo added!'
     else:
-        response_object['todo'] = TODO
+        response_object['todo'] = TODOS
     return jsonify(response_object)
 
 
@@ -49,14 +57,14 @@ def single_todo(todo_id):
     if request.method == 'GET':
         # TODO: refactor to a lambda and filter
         return_todo = ''
-        for todo in TODO:
+        for todo in TODOS:
             if todo['id'] == todo_id:
                 return_todo = todo
         response_object['todo'] = return_todo
     if request.method == 'PUT':
         post_data = request.get_json()
         remove_todo(todo_id)
-        TODO.append({
+        TODOS.append({
             'id': uuid.uuid4().hex,
             'todo': post_data.get('todo'),
             'assignee': post_data.get('assignee'),
@@ -70,9 +78,9 @@ def single_todo(todo_id):
 
 
 def remove_todo(todo_id):
-    for todo in TODO:
+    for todo in TODOS:
         if todo['id'] == todo_id:
-            TODO.remove(todo)
+            TODOS.remove(todo)
             return True
     return False
 
