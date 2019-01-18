@@ -25,6 +25,7 @@
 
 
 <h2>Anwendungsentwicklung - Anforderungsmanagement und SW-Design</h2>
+
 - Implementieren Sie einen Client in Python, der sich mit der vorhandenen Server-Einheit verbindet und die Daten in eine eigene JSON Struktur lädt.
 
 - Was würden Sie bei der Server-API anders definieren, damit verschiedene Clients auf die angebotenenen Funktionen zugreifen könnten?
@@ -34,12 +35,87 @@
 
 <h2>Softwareentwicklungsprozess - Verifikation und kontinuierliche Entwicklung
 </h2>
+
 - Welche Tools würden Sie einsetzen, und wie würden die entsprechenden Konfigurationsdateien aussehen? Erstellen Sie ein Konzept!
+    - Ich würde für die Tests des Backends, bzw. dem Server, Pytests, die mit Tox ausgeführt werden, verwenden. 
+    Für den Frontend, bzw. dem VueJS-Client, würde ich Cypress verwenden. 
+    Zudem würde ich Travis CI als Continuous Integrations Plattform verwenden.
+    Mit Travis würde ich Cypress und Tox verwenden.
+    
+tox.ini:
+    
+```
+[tox]
+envlist = py37
+#,docs
 
+[testenv]
+deps = -requirements.txt
+commands =
+    pytest --cov=server --html=testreport.html --self-contained-html -vv
+setenv =
+    PYTHONPATH = src/main/python
+
+[testenv:docs]
+description = invoke sphinx-build to build the HTML docs
+basepython = python3.7
+deps = sphinx -requirements.txt
+commands =
+    sphinx-apidoc -o docs/source --tocfile index -F -f -P -l --ext-autodoc --ext-coverage src/main/python
+    sphinx-build -c docs/source "docs/source" "docs/build" --color -W -bhtml {posargs}
+    python -c 'import pathlib; print("documentation available under file://\{0\}".format(pathlib.Path(r"{toxworkdir}") / "docs_out" / "index.html"))'
+
+[pytest]
+testpaths = src/unittest/python
+python_files = test_*.py
+python_classes = Test
+```
+    
+und die requirements.txt für tox.ini:
+```
+pytest
+pytest-cov
+pytest-html
+pytest-flask
+flask
+flask-restful
+flask_cors
+```
+.travis.yml:
+```
+matrix:
+  include:
+  - stage: Tox
+    language: 'python'
+    python:
+    - "3.7"
+    install: pip install tox-travis
+    script: tox
+  - stage: Vue
+    language: 'node_js'
+    install:
+    - cd src/main/vue/client
+    - npm ci
+    script: npm test
+```
+
+    
 - Bereiten Sie einen einfachen Test für den Aufruf der Random Funktion vor. Wie würden Sie diesen starten?
-
+    - Zuerst test_run.py erstellen. Hier werden die Tests durchgeführt. 
+    pytest importieren. Eine client Funktion definieren, wo für jeden Test der Client neu gestartet wird. Darüber @pytest.fixture.
+    Dann die Funktion test_get(client) definiert, wo der GET getestet wird.
+    Man ruft die URL auf und bekommt die JSON-Daten, falls die Übertragung geklappt hat.
+    Um dies zu testen, vergleich man den Statuscode mit 200. Falls es True ist, hat die übertragung geklappt.
+    
+    
 - Implementieren Sie einen einfachen grafischen Test. Worauf achten Sie dabei?
-
+    - Ich achte darauf, dass das Backend bzw. der Server läuft.
+  
 - Definieren Sie eine Konfiguration mit TravisCI für eine kontinuierliche Integration. Was müssen Sie dabei für die Python Tests und was für die grafischen Tests vorsehen?
-
+  Im Konfig.-File einstellen, das es verwendet wird.
+  
 - Welche Tests würden Sie für die Grenzen der Random Funktion vorsehen?
+    - Um zu prüfen, ob die Random Funktion einen Wert zwischen 1 bis 100 liefert,
+  kann man mit assert prüfen, ob der Rückgabewert, zwischen 1 bis 100 ist.
+  Man bekommt den Int-Wert mit: res.json("randomNumber").
+  Man kann auch prüfen ob es ungleich einer Zahl unter 1, bzw. über 100 ist.
